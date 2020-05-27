@@ -1,5 +1,6 @@
 from random import randrange
 
+import vect
 import pygame
 from pygame.locals import *
 pygame.init()
@@ -41,6 +42,8 @@ LETTRES_POINTS =  {'a': 1,
 	               'g': 7,
 	               'h': 8,
 	               'i': 9,
+				   'j' : 3,
+				   'k':2,
 	               'l': 1,
 	               'm': 2,
 	               'n': 3,
@@ -52,8 +55,11 @@ LETTRES_POINTS =  {'a': 1,
 	               't': 9,
 	               'u': 1,
 	               'v': 2,
+				   'w':2,
+       			   'x': 4,
+				   'y':2,
 	               'z': 3,
-	               'x': 4}
+	               }
 
 #Permet d'obtenir le total de point a partir d'une chaine grace aux valeurs des différentes lettres
 #qui la constitue
@@ -142,3 +148,89 @@ def get_liste_voisins_from_case(w):
 
 
 
+#Implementation des derniers features
+liste = ['i', 'e', 'u', 'i', 'd', 'p', 'u', 'n', 'o', 'o', 'b', 'i', 'i', 'm', 'n', 'u']
+
+  
+from collections import Counter
+def possible_words(input = get_list_mot_from_file(), charSet=[]):
+    result = [] 
+    for word in input:
+        word = word.rstrip() 
+        dict = Counter(word)
+        flag = 1
+        for key in dict.keys(): 
+            if key not in charSet: 
+                flag = 0
+        if flag == 1:
+            testeur = False
+            for i in word : 
+                if (word.count(i) > charSet.count(i)):
+                    break
+                print("dans le mot",word.count(i),charSet.count(i),word,i)
+                testeur = True
+            if (testeur):
+                result.append(word)
+    return result 
+
+
+#print(charCount(get_list_mot_from_file()))   
+input = ['abaissement', 'manger','boire'] 
+charSet = ['m','a','n','g','o','e','r','b','i'] 
+#possible_words(input, charSet) 
+#possible_words(get_list_mot_from_file(), charSet) 
+
+already = []
+def parcours_profondeur(index):
+    if(index not in already):
+        voisins = GRAPHE_REPR[index]
+        print("les voisins ",index,"sont : ",voisins)
+        for voisinIndex in voisins :
+            """
+            voisins = voisins.remove(voisinIndex)
+            already.append(voisinIndex)
+            print(already)"""
+            parcours_profondeur(voisinIndex)
+        """
+        if len(voisins) == 0 :
+            return already
+        if voisinIndex not in already:
+            voisins.remove(voisinIndex)
+            already.append(voisinIndex)
+            parcours_profondeur(voisinIndex)"""
+
+
+def largeur(G,i):
+    #initialisation du vecteur de visite
+    Visite=vect.initVect(len(G),0)    
+    ordreVisite=[]
+    Visite[i]=1
+    File=[i]
+    while len(File)!=0:
+        x=File.pop(0)
+        ordreVisite.append(x)
+        for y in G[x]:
+            if Visite[y] == 0:
+                File.append(y)
+                Visite[y]=1
+    return ordreVisite
+
+#Fonctions qui nous donne tous les parcours dispo
+#On l'utilisera avec notre fonction qui donne tous les mots dispo 
+#a partir d'une liste de lettres
+def parcours_rob_as_numbers():
+    result = []
+    for i in range(16):
+        chemin = largeur(GRAPHE_REPR ,i)
+        result.append(chemin)
+    return result
+    
+def parcours_rob_as_letters(l):
+    liste = parcours_rob_as_numbers()
+    for i in liste:
+        print(i)
+        for index in i:
+            print(l[index -1]['text'])
+        
+
+    

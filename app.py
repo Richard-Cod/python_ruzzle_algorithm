@@ -16,7 +16,7 @@ from tkinter.messagebox import *
 SCREEN_HEIGHT,SCREEN_WIDTH = 400,400
 NB_CASES = 4
 ONE_CASE_WIDTH = SCREEN_WIDTH/NB_CASES
-SUCCESS_COLOR='green'
+SUCCESS_COLOR='#ff8700'
 
 
 """ Liste des Variables liées au programme""" 
@@ -43,7 +43,8 @@ def reinitialise_game():
 	increase_score(-1*SCORE)
 	WORDS_FOUNDED=[]
 	display_message('.')
-	display_buttons()
+	#display_buttons()
+	canvas.old_coords = None
 
 
 #Permet la mise en place du timer 
@@ -62,7 +63,6 @@ def countDown():
 		SECONDES-=1
 	else:
 		reponse = askokcancel("recommencer", "Voulez-vous recommencer ?")
-		print(reponse)
 		if reponse:
 			reinitialise_game()
 		else:
@@ -118,6 +118,7 @@ def check_word_created():
 	else:
 		t="ERREUR ! '{}'' existe pas".format(v.get())
 		display_message(t,"red",'black')
+		
 		erreur_song.play()
 
 
@@ -125,6 +126,7 @@ def check_word_created():
 def activate_selection(e):
 	global SELECTION_MODE
 	if SELECTION_MODE==False:
+		#canvas.old_coords = e.x , e.y
 		SELECTION_MODE=True
 		on_mouse_over_frame_buttons(e)
 
@@ -138,6 +140,9 @@ def on_mouse_over_frame_buttons(e):
 		#(Considere WIDGET et CASE à lettre comme pareil)
 		#Si il ne s'agit pas de la  1ere lettre du mot qui est en constitution
 		if len(LISTE_WIDGET_SELECTED)>1:
+			#print(e.x,e.y,canvas.old_coords)
+			#canvas.create_line(e.x,e.y,canvas.old_coords[0],canvas.old_coords[1],width=10)
+			#canvas.old_coords = e.x , e.y
 			#Récupère la position de la case courante dans la liste
 			index = LISTE_WIDGET_SELECTED.index(e.widget) 
 
@@ -157,7 +162,7 @@ def on_mouse_over_frame_buttons(e):
 				return None
 
 
-		if e.widget['background']== 'green':
+		if e.widget['background']== SUCCESS_COLOR:
 			return None
 
 		#On ajoute la lettre à la chaine construite
@@ -174,6 +179,8 @@ def on_mouse_over_frame_buttons(e):
 #Permet de terminer donc la séléction en remettant tout à 0
 def on_mouse_leave_frame(e):
 	global CURRENT_STRING,SELECTION_MODE,LISTE_WIDGET_SELECTED
+	canvas.delete("all")
+	canvas.old_coords = None
 	if SELECTION_MODE:
 		#Remet toutes les lettres à leur couleur initiale
 		reset_frame_to_zero()
@@ -221,13 +228,14 @@ def display_buttons():
 			cpt+=1
 """
 #make_list_randomly
+"""
 def display_buttons():
     cpt=1
     maliste = make_list_randomly()
     for i in range(0,4):
         for j in range(0,4):
             btn=Button(gridframe,width=8,height=4, text=maliste.pop(),font=("Times", "14", "bold"))
-            btn.grid(row=i,column=j,padx=4,pady=4)
+            btn.grid(row=i,column=j,padx=20,pady=15)
             #Clique gauche (clique normal) de la souris démarre le mode séléction
             btn.bind("<Button-1>", activate_selection)
             #Clique droit de la souris permet de terminer le mode séléction
@@ -236,8 +244,32 @@ def display_buttons():
             btn.bind("<Enter>", on_mouse_over_frame_buttons)
             cpt+=1
     
-		
-
+"""	
+def display_buttons():
+    cpt=1
+    maliste = make_list_randomly()
+    possible_words(charSet=maliste)
+    for i in range(0,4):
+        for j in range(0,4):
+            g = maliste.pop()
+            texte = f"{g} \n {LETTRES_POINTS[g]}"
+            btn=Button(canvas,width=8,height=4, text=g,font=("Times", "14", "bold"))
+            btn.grid(row=i,column=j,padx=20,pady=15)
+            #Clique gauche (clique normal) de la souris démarre le mode séléction
+            btn.bind("<Button-1>", activate_selection)
+            #Clique droit de la souris permet de terminer le mode séléction
+            btn.bind("<Button-3>", on_mouse_leave_frame)
+            #L'orsque on est en train de survoler les cases de la grille de case
+            btn.bind("<Enter>", on_mouse_over_frame_buttons)
+            cpt+=1
+    	
+def myfunction(event):
+    if SELECTION_MODE:
+        x, y = event.x, event.y
+        if canvas.old_coords:
+            x1, y1 = canvas.old_coords
+            canvas.create_line(x, y, x1, y1,width=10,fill='yellow')
+        canvas.old_coords = x, y
 
 #Permet de terminer le temps
 def termine():
@@ -271,6 +303,12 @@ message_zone.grid(row=2,column=1)
 gridframe = Frame(f,bg='#438abe')
 gridframe.grid(row=3,column=1)
 
+canvas = Canvas(gridframe,bg="#428bc3")
+canvas.grid(row=1,column=1)
+#canvas.bind("<Button-1>", clique)
+canvas.bind('<Motion>', myfunction)
+canvas.old_coords = None
+
 
 consigne_zone = Label(f,text="Clique gauche pour commencer la séléction et clique droit pour la terminer ",
 						font=("Times", "10", "bold"))
@@ -280,10 +318,18 @@ consigne_zone.grid(row=4,column=1)
 #Quand l'utilisateur quitte notre grille de cases 
 gridframe.bind("<Leave>", on_mouse_leave_frame)
 
+def clique(e):
+	print("vous avez cliqué dans un coin vide")
+#Quand on clique dans un endroit vide 
+
+
 
 #Afficher l'ensemble des Buttons pour l'utilisateur
 display_buttons()
 
+
+#ooooooooooooooooooooooooooooooooooo
+parcours_rob_as_letters(canvas.winfo_children())
 #Démarrer le timer
 countDown()
 

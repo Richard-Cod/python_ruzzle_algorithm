@@ -7,6 +7,7 @@ url = "https://fr.wikipedia.org/wiki/Fr%C3%A9quence_d%27apparition_des_lettres_e
 page = requests.get(url)
 soup= BeautifulSoup(page.content,'html.parser')
 table_class = "wikitable sortable jquery-tablesorter"
+
 def get_letter_frequency():
     table = soup.find_all("table")[0]
     tableau = {}
@@ -16,7 +17,7 @@ def get_letter_frequency():
             rang = i[0].getText()
             caractere=i[1].getText().strip()
             pourcentage = i[3].getText().strip()
-            tableau[caractere] = float(pourcentage.replace(',','.')) 
+            tableau[caractere] = float(pourcentage.replace(',','.').replace('%','')) 
     return tableau
 
 tab = get_letter_frequency()
@@ -45,19 +46,12 @@ def make_list_randomly():
     return l
 
 
-liste = make_list_randomly()
-print(liste)
+#liste = make_list_randomly()
+#print(liste)
 
-"""
-print(LETTERS_AND_RANGE)
+input = ['abaissement', 'manger','boire'] 
+charSet = ['a','a','a','b','i','s','s','e','e','m','n','t'] 
+mots = possible_words(input = input, charSet=charSet)
 
-def get_random_letter_by_range():
-    for i in LETTERS_AND_RANGE:
-        print(i)
 
-get_random_letter_by_range()
-"""
-
-#LETTRES
-#LETTRES_POINTS
-#print(LETTRES)
+print("les mots sont : ",mots)
