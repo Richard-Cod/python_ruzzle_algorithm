@@ -48,9 +48,8 @@ def make_list_randomly():
 
 #liste = make_list_randomly()
 #print(liste)
-
 input = ['abaissement', 'manger','boire'] 
-charSet = ['a','a','a','b','i','s','s','e','e','m','n','t'] 
+charSet = ['a','b','i','s','s','e','e','m','n','t'] 
 mots = possible_words(input = input, charSet=charSet)
 
 

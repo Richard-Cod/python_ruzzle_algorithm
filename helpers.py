@@ -163,13 +163,15 @@ def possible_words(input = get_list_mot_from_file(), charSet=[]):
             if key not in charSet: 
                 flag = 0
         if flag == 1:
-            testeur = False
+            print(word,'est un bon mot')
+            testeur = True
             for i in word : 
                 if (word.count(i) > charSet.count(i)):
+                    print("+ de ",i," dans ",word,"que dans ",charSet)
+                    testeur = False
                     break
-                print("dans le mot",word.count(i),charSet.count(i),word,i)
-                testeur = True
             if (testeur):
+                #print(word)
                 result.append(word)
     return result 
 
@@ -227,10 +229,31 @@ def parcours_rob_as_numbers():
     
 def parcours_rob_as_letters(l):
     liste = parcours_rob_as_numbers()
+    result = []
     for i in liste:
-        print(i)
+        #print(i)
+        truc = [l[index -1]['text'] for index in i]
+        result.append(list(zip(i,truc)))
+        """
         for index in i:
-            print(l[index -1]['text'])
+            print(l[index -1]['text'],end="")"""
+    return result
         
-
+""" 
+def supper(l,listeDeLettres):
+    allWords = possible_words(charSet=listeDeLettres)[0:6]
+    parcours = parcours_rob_as_letters(l)
     
+    print(allWords)
+    print(parcours[1])
+    
+    for lettreInListe in listeDeLettres:
+        for mot in allWords:
+            if(mot[0] == lettreInListe):
+                motAsList = [i for i in mot]
+                print(motAsList)
+                for i in motAsList:
+                    print(i)
+                	lieuLettre = listeDeLettres.index(motAsList.pop(0))
+                	print(lieuLettre)
+"""  
