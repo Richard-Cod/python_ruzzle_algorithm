@@ -36,7 +36,8 @@ CURRENT_STRING = ""
 LISTE_WIDGET_SELECTED=[]
 
 
-MYLLISTOFLETTERS = make_list_randomly()
+#MYLLISTOFLETTERS = make_list_randomly()
+MYLLISTOFLETTERS = ['c','c','l','e','c','a','e','t','a','s','r','d','e','i','n','l']
 
 #Permet de remettre à 0 le Jeu en l'occurence quand l'utilisateur recommence le jeu
 def reinitialise_game():
@@ -255,7 +256,7 @@ def display_buttons():
     #print(motsPossibles)
     for i in range(0,4):
         for j in range(0,4):
-            g = maliste.pop()
+            g = maliste.pop(0).lower()
             texte = f"{g} \n {LETTRES_POINTS[g]}"
             btn=Button(canvas,width=8,height=4, text=g,font=("Times", "14", "bold"))
             btn.grid(row=i,column=j,padx=20,pady=15)
@@ -314,16 +315,15 @@ canvas.bind('<Motion>', myfunction)
 canvas.old_coords = None
 
 scrollbar = Scrollbar(f)
-scrollbar.grid(column=4,row=3)
+#scrollbar.grid(column=1,row=3)
 
-listBox = Listbox(f,bg="#f0f0f0",height=30,fg = "black")
-listBox.grid(column=3,row=3)
+listBox = Listbox(f,bg="#1a364c",height=30,fg = "white")
+listBox.grid(column=0,row=3)
 
 scrollbar.config( command = listBox.yview, )
 
-for i,j in enumerate(possible_words(charSet=MYLLISTOFLETTERS)):
-    print(j)
-    listBox.insert(i,j)
+
+    
 
 consigne_zone = Label(f,text="Clique gauche pour commencer la séléction et clique droit pour la terminer ",
 						font=("Times", "10", "bold"))
@@ -345,6 +345,12 @@ display_buttons()
 
 #ooooooooooooooooooooooooooooooooooo
 #supper(canvas.winfo_children(),MYLLISTOFLETTERS)
+#parcours_rob_as_letters(canvas.winfo_children())
+a = supper(canvas.winfo_children(),MYLLISTOFLETTERS)
+for i,j in enumerate(a):
+    #print(j)
+    listBox.insert(i,j)
+    
 #Démarrer le timer
 countDown()
 

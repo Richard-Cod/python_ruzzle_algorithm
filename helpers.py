@@ -163,11 +163,11 @@ def possible_words(input = get_list_mot_from_file(), charSet=[]):
             if key not in charSet: 
                 flag = 0
         if flag == 1:
-            print(word,'est un bon mot')
+            #print(word,'est un bon mot')
             testeur = True
             for i in word : 
                 if (word.count(i) > charSet.count(i)):
-                    print("+ de ",i," dans ",word,"que dans ",charSet)
+                    #print("+ de ",i," dans ",word,"que dans ",charSet)
                     testeur = False
                     break
             if (testeur):
@@ -222,10 +222,11 @@ def largeur(G,i):
 #a partir d'une liste de lettres
 def parcours_rob_as_numbers():
     result = []
-    for i in range(16):
+    for i in range(17):
         chemin = largeur(GRAPHE_REPR ,i)
         result.append(chemin)
-    return result
+        
+    return result[1:len(result)]
     
 def parcours_rob_as_letters(l):
     liste = parcours_rob_as_numbers()
@@ -233,27 +234,97 @@ def parcours_rob_as_letters(l):
     for i in liste:
         #print(i)
         truc = [l[index -1]['text'] for index in i]
-        result.append(list(zip(i,truc)))
+        #result.append(list(zip(i,truc)))
+        print(truc)
         """
         for index in i:
             print(l[index -1]['text'],end="")"""
     return result
+
+
+def letterAndPosition(l):
+    liste = parcours_rob_as_numbers()[0]
+    result = {}
+    for i in liste : 
+        result[l[i -1]['text']] = []
+               
+               
+    for i in liste :
+        result[l[i -1]['text']].append(i)
+            
+    #print(result)
+    return result
+
+
+"""
+			if index < len(mot) -1 :
+				if dico[mot[index + 1]] in voisins:
+					print(f'{mot[index]} peut toucher {mot[index + 1]}')
+					
+				else:
+					testeur = False
+					print(f'{mot[index]} NOTOUCH {mot[index + 1]}') 
+"""
+
+def touchable(position ,suivant,liste,parto):
+    for positionNext in liste:
+        if positionNext in GRAPHE_REPR[position]:
+            print("suivant ",suivant, " ",positionNext," dans ",GRAPHE_REPR[position])
+            return touchable(positionNext,suivant,GRAPHE_REPR[position],parto)
+        else:
+            print('far')
+            break
+                        
+def importante(mot,dico):
+    isGOOD = True
+    canTouch = False
+    print(mot)
+    for positionDeLettreCourante in range(len(mot)):
         
-""" 
+        lettre = mot[positionDeLettreCourante]
+        allPositionsOfLetter = dico[lettre]
+        #voisins = GRAPHE_REPR[dico[i]]
+        for position in allPositionsOfLetter:
+            
+            voisins = GRAPHE_REPR[position]
+            #print("les voisins de ",lettre," ",voisins)
+            
+            if positionDeLettreCourante < len(mot) -1 :
+                actu , suivant = mot[positionDeLettreCourante] ,mot[positionDeLettreCourante +1]
+                print(actu,"pos = ",position," son suivant ",suivant," se situe ",dico[suivant])
+                print(f"voisin de {actu} ",GRAPHE_REPR[position] )
+                intersection = list(set(dico[suivant]).intersection(GRAPHE_REPR[position]))
+                
+                if(len(intersection) > 0):
+                    print(f"{actu} peut atteindre {suivant}")
+                    break
+                else:
+                    return 
+                    break
+                
+                #touchable(position ,suivant,dico[suivant],[i for i in mot])
+                        
+  
+    return isGOOD
+                
+    
+    
 def supper(l,listeDeLettres):
-    allWords = possible_words(charSet=listeDeLettres)[0:6]
-    parcours = parcours_rob_as_letters(l)
-    
+    result = []
+    allWords = possible_words(charSet=listeDeLettres)
     print(allWords)
-    print(parcours[1])
     
-    for lettreInListe in listeDeLettres:
-        for mot in allWords:
-            if(mot[0] == lettreInListe):
-                motAsList = [i for i in mot]
-                print(motAsList)
-                for i in motAsList:
-                    print(i)
-                	lieuLettre = listeDeLettres.index(motAsList.pop(0))
-                	print(lieuLettre)
-"""  
+    lettreEtPosition = letterAndPosition(l)
+    print(lettreEtPosition)
+    #importante(allWords[0],lettreEtPosition)
+    
+    for mot in allWords:
+        if (importante(mot,lettreEtPosition)):
+            print(f"Le {mot} est un bon mot")
+            
+            result.append(mot)
+    print(result)       
+    return result
+
+            
+            
